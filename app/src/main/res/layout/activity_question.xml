@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/timer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".Question_activity">
+
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/sky_orange"
+        android:text="Time:"
+        android:textColor="@color/orange"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+        app:layout_constraintEnd_toStartOf="@+id/tv_num"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <ProgressBar
+        android:id="@+id/progressBar2"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="287dp"
+        android:layout_height="10dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tv_num"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="413dp"
+        android:layout_height="685dp"
+        android:background="@color/beige"
+        tools:layout_editor_absoluteX="-1dp"
+        tools:layout_editor_absoluteY="46dp">
+
+        <Button
+            android:id="@+id/btn_ans1"
+            android:layout_width="345dp"
+            android:layout_height="52dp"
+            android:backgroundTint="@color/sky_orange"
+            android:fontFamily="@font/adlam_display"
+            android:text="Button"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            app:cornerRadius="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="349dp" />
+
+        <Button
+            android:id="@+id/btn_ans3"
+            android:layout_width="345dp"
+            android:layout_height="52dp"
+            android:backgroundTint="@color/sky_orange"
+            android:fontFamily="@font/adlam_display"
+            android:text="Button"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            app:cornerRadius="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="486dp" />
+
+        <Button
+            android:id="@+id/btn_ans2"
+            android:layout_width="345dp"
+            android:layout_height="52dp"
+            android:backgroundTint="@color/sky_orange"
+            android:fontFamily="@font/adlam_display"
+            android:text="Button"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            app:cornerRadius="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="418dp" />
+
+        <Button
+            android:id="@+id/btn_suiv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/sky_orange"
+            android:text="Button"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            app:cornerRadius="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.945"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_ans3"
+            app:layout_constraintVertical_bias="0.831" />
+
+        <ImageView
+            android:id="@+id/questions"
+            android:layout_width="354dp"
+            android:layout_height="238dp"
+            app:srcCompat="@drawable/algerie"
+            tools:layout_editor_absoluteX="25dp"
+            tools:layout_editor_absoluteY="79dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/tv_num"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="-5dp"
+        android:text="15"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+        app:layout_constraintEnd_toStartOf="@+id/progressBar2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tv_time"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.761" />
+</androidx.constraintlayout.widget.ConstraintLayout>
