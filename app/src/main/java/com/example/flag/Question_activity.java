@@ -1,8 +1,10 @@
 package com.example.flag;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -75,6 +77,19 @@ public class Question_activity extends AppCompatActivity implements View.OnClick
     }
 
     private void showNextQuestion() {
+
+        // --- أضف الكود هنا ---
+        buttonAnswer1.setEnabled(true);
+        buttonAnswer2.setEnabled(true);
+        buttonAnswer3.setEnabled(true);
+
+        // إعادة اللون الافتراضي (استخدم اللون المناسب لتصميمك)
+        buttonAnswer1.setBackgroundColor(Color.parseColor("#FF9E80")); // اللون الذي استخدمته
+        buttonAnswer2.setBackgroundColor(Color.parseColor("#FF9E80"));
+        buttonAnswer3.setBackgroundColor(Color.parseColor("#FF9E80"));
+        // --- نهاية الإضافة ---
+
+
         if (countDownTimer != null) {
             countDownTimer.cancel();
         }
@@ -136,26 +151,67 @@ public class Question_activity extends AppCompatActivity implements View.OnClick
         checkAnswer(selectedOptionIndex);
     }
 
+
     private void checkAnswer(int selectedOptionIndex) {
         if (countDownTimer != null) {
             countDownTimer.cancel();
         }
 
-        // Adjust index because currentQuestionIndex was already incremented in showNextQuestion
-        Question question = questionList.get(currentQuestionIndex - 1);
+        // تعطيل الأزرار لمنع النقر مرة أخرى
+        buttonAnswer1.setEnabled(false);
+        buttonAnswer2.setEnabled(false);
+        buttonAnswer3.setEnabled(false);
 
-        if (selectedOptionIndex == question.getCorrectAnswerIndex()) {
+        // الحصول على السؤال الحالي (تذكر أن currentQuestionIndex تمت زيادته بالفعل)
+        Question question = questionList.get(currentQuestionIndex - 1);
+        int correctOptionIndex = question.getCorrectAnswerIndex();
+
+        // تحديد الزر الصحيح وتلوينه بالأخضر
+        Button correctButton;
+        if (correctOptionIndex == 0) {
+            correctButton = buttonAnswer1;
+        } else if (correctOptionIndex == 1) {
+            correctButton = buttonAnswer2;
+        } else { // correctOptionIndex == 2
+            correctButton = buttonAnswer3;
+        }
+        correctButton.setBackgroundColor(Color.GREEN);
+
+        // التحقق من إجابة المستخدم
+        if (selectedOptionIndex == correctOptionIndex) {
+            // إجابة صحيحة
             score++;
             Toast.makeText(this, "Correct!", Toast.LENGTH_SHORT).show();
         } else if (selectedOptionIndex == -1) {
+            // الوقت انتهى (لا نلون أي زر بالأحمر)
             Toast.makeText(this, "Time's up!", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "Wrong! Correct was: " + question.getOptions()[question.getCorrectAnswerIndex()], Toast.LENGTH_SHORT).show();
+            // إجابة خاطئة
+            Toast.makeText(this, "Wrong!", Toast.LENGTH_SHORT).show();
+
+            // تحديد الزر الذي اختاره المستخدم وتلوينه بالأحمر
+            Button selectedButton;
+            if (selectedOptionIndex == 0) {
+                selectedButton = buttonAnswer1;
+            } else if (selectedOptionIndex == 1) {
+                selectedButton = buttonAnswer2;
+            } else { // selectedOptionIndex == 2
+                selectedButton = buttonAnswer3;
+            }
+            selectedButton.setBackgroundColor(Color.RED);
         }
 
-        // Load the next question or finish
-        showNextQuestion();
+        // تأخير بسيط ثم الانتقال للسؤال التالي
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                showNextQuestion();
+
+            }
+        }, 1500); // تأخير لمدة 1.5 ثانية (1500 ميلي ثانية)
     }
+
+
 
     private void finishQuiz() {
         // Display final score or navigate to a results screen
