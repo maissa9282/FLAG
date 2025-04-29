@@ -1,7 +1,10 @@
 package com.example.flag;
 
+import static android.widget.Toast.LENGTH_SHORT;
+
 import android.annotation.SuppressLint;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -21,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class Question_activity extends AppCompatActivity implements View.OnClickListener  {
+public class Question_activity extends AppCompatActivity implements View.OnClickListener {
 
     private TextView textViewTimer;
     private TextView textViewQuestionNumber;
@@ -34,6 +37,7 @@ public class Question_activity extends AppCompatActivity implements View.OnClick
     private long timeLeftInMillis;
     private CountDownTimer countDownTimer;
     private static final long COUNTDOWN_IN_MILLIS = 30000; // 30 seconds per question
+    private MediaPlayer timerMediaPlayer;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -114,6 +118,7 @@ public class Question_activity extends AppCompatActivity implements View.OnClick
     }
 
     private void startCountDown() {
+        startTimerSound();
         countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -153,10 +158,11 @@ public class Question_activity extends AppCompatActivity implements View.OnClick
 
 
     private void checkAnswer(int selectedOptionIndex) {
+
         if (countDownTimer != null) {
             countDownTimer.cancel();
         }
-
+          stopTimerSound();
         // تعطيل الأزرار لمنع النقر مرة أخرى
         buttonAnswer1.setEnabled(false);
         buttonAnswer2.setEnabled(false);
@@ -181,13 +187,15 @@ public class Question_activity extends AppCompatActivity implements View.OnClick
         if (selectedOptionIndex == correctOptionIndex) {
             // إجابة صحيحة
             score++;
-            Toast.makeText(this, "Correct!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Correct!", LENGTH_SHORT).show();
+            playSound(R.raw.correct); // <-- تشغيل صوت الإجابة الصحيحة
         } else if (selectedOptionIndex == -1) {
             // الوقت انتهى (لا نلون أي زر بالأحمر)
-            Toast.makeText(this, "Time's up!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Time's up!", LENGTH_SHORT).show();
+            playSound(R.raw.timer); // <-- تشغيل صوت انتهاء الوقت
         } else {
             // إجابة خاطئة
-            Toast.makeText(this, "Wrong!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Wrong!", LENGTH_SHORT).show();
 
             // تحديد الزر الذي اختاره المستخدم وتلوينه بالأحمر
             Button selectedButton;
@@ -199,6 +207,7 @@ public class Question_activity extends AppCompatActivity implements View.OnClick
                 selectedButton = buttonAnswer3;
             }
             selectedButton.setBackgroundColor(Color.RED);
+            playSound(R.raw.wrong); // <-- تشغيل صوت الإجابة الخاطئة
         }
 
         // تأخير بسيط ثم الانتقال للسؤال التالي
@@ -206,11 +215,9 @@ public class Question_activity extends AppCompatActivity implements View.OnClick
             @Override
             public void run() {
                 showNextQuestion();
-
             }
         }, 1500); // تأخير لمدة 1.5 ثانية (1500 ميلي ثانية)
     }
-
 
 
     private void finishQuiz() {
@@ -234,9 +241,48 @@ public class Question_activity extends AppCompatActivity implements View.OnClick
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        stopTimerSound();
         // Ensure the timer is cancelled when the activity is destroyed
         if (countDownTimer != null) {
             countDownTimer.cancel();
         }
     }
+
+
+    private void playSound(int soundResourceId) {
+        MediaPlayer mediaPlayer = MediaPlayer.create(this, soundResourceId);
+        if (mediaPlayer != null) {
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    mp.release(); // تحرير الموارد بعد انتهاء التشغيل
+                }
+            });
+            mediaPlayer.start();
+        } else {
+            // يمكنك إضافة رسالة خطأ هنا إذا لم يتم العثور على الملف الصوتي
+            Toast.makeText(this, "Error loading sound", LENGTH_SHORT).show();
+        }
+    }
+
+    private void startTimerSound() {
+        stopTimerSound(); // أوقف أي صوت مؤقت سابق قد يكون قيد التشغيل
+        timerMediaPlayer = MediaPlayer.create(this, R.raw.timer); // استخدم اسم ملف صوت المؤقت الخاص بك
+        if (timerMediaPlayer != null) {
+            timerMediaPlayer.setLooping(true); // اجعل الصوت يتكرر
+            timerMediaPlayer.start();
+        } else {
+            Toast.makeText(this, "Error loading timer sound", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void stopTimerSound() {
+        if (timerMediaPlayer != null) {
+            if (timerMediaPlayer.isPlaying()) {
+                timerMediaPlayer.stop();
+            }
+            timerMediaPlayer.release(); // تحرير الموارد
+            timerMediaPlayer = null;
+        }
+    }
+
 }
