@@ -23,6 +23,7 @@ import androidx.core.view.WindowInsetsCompat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 public class Question_activity extends AppCompatActivity implements View.OnClickListener {
 
@@ -38,6 +39,9 @@ public class Question_activity extends AppCompatActivity implements View.OnClick
     private CountDownTimer countDownTimer;
     private static final long COUNTDOWN_IN_MILLIS = 30000; // 30 seconds per question
     private MediaPlayer timerMediaPlayer;
+    private Button button_Skip;
+
+    private Button buttonHint;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -51,10 +55,15 @@ public class Question_activity extends AppCompatActivity implements View.OnClick
         buttonAnswer1 = findViewById(R.id.buttonAnswer1);
         buttonAnswer2 = findViewById(R.id.buttonAnswer2);
         buttonAnswer3 = findViewById(R.id.buttonAnswer3);
+        button_Skip = findViewById(R.id.button_Skip);
+        buttonHint=findViewById(R.id.buttonHint);
 
+        button_Skip.setOnClickListener(this);
         buttonAnswer1.setOnClickListener(this);
         buttonAnswer2.setOnClickListener(this);
         buttonAnswer3.setOnClickListener(this);
+        buttonHint.setOnClickListener(this);
+
 
         loadQuestions();
         showNextQuestion();
@@ -64,9 +73,12 @@ public class Question_activity extends AppCompatActivity implements View.OnClick
         // --- IMPORTANT: Add your questions here! ---
         // Replace 'R.drawable.image_name' with your actual image resource IDs in the res/drawable folder.
         // Example:
-        questionList.add(new Question(R.drawable.spain, new String[]{"spain", "Austrelia", "japon"}, 0)); // Assuming Option A1 is correct
-        questionList.add(new Question(R.drawable.suisse, new String[]{"Maroc", "suisse", "Tunisie"}, 1)); // Assuming Option B2 is correct
+        questionList.add(new Question(R.drawable.spain, new String[]{"Spain", "Austrelia", "Japon"}, 0)); // Assuming Option A1 is correct
+        questionList.add(new Question(R.drawable.suisse, new String[]{"Maroc", "Suisse", "Tunisie"}, 1)); // Assuming Option B2 is correct
         questionList.add(new Question(R.drawable.taiwan, new String[]{"China", "Tutkie", "Taiwan"}, 2)); // Assuming Option C3 is correct
+        questionList.add(new Question(R.drawable.algerie, new String[]{"Algeria", "Yamen", "Libie"}, 0)); // Assuming Option C3 is correct
+        questionList.add(new Question(R.drawable.china, new String[]{"Japon", "China", "Brazil"}, 1)); // Assuming Option C3 is correct
+        questionList.add(new Question(R.drawable.korea, new String[]{"Canada", "Tutkie", "Korea"}, 2)); // Assuming Option C3 is correct
         // Add more questions as needed...
 
         // You might want to shuffle the questions for variety
@@ -87,12 +99,22 @@ public class Question_activity extends AppCompatActivity implements View.OnClick
         buttonAnswer2.setEnabled(true);
         buttonAnswer3.setEnabled(true);
 
+
         // إعادة اللون الافتراضي (استخدم اللون المناسب لتصميمك)
         buttonAnswer1.setBackgroundColor(Color.parseColor("#FF9E80")); // اللون الذي استخدمته
         buttonAnswer2.setBackgroundColor(Color.parseColor("#FF9E80"));
         buttonAnswer3.setBackgroundColor(Color.parseColor("#FF9E80"));
-        // --- نهاية الإضافة ---
+        button_Skip.setEnabled(true);
+        buttonHint.setEnabled(true);
+        buttonHint.setAlpha(1.0f); // إعادة الشفافية إذا كنت تغيرها عند استخدام التلميح
+        buttonAnswer1.setAlpha(1.0f); // إعادة شفافية أزرار الإجابات إذا كنت تغيرها
+        buttonAnswer2.setAlpha(1.0f);
+        buttonAnswer3.setAlpha(1.0f);
 
+        boolean hintUsed = false; // <-- أضف السطر هنا لإعادة السماح باستخدام التلميح
+
+
+        button_Skip.setEnabled(true);
 
         if (countDownTimer != null) {
             countDownTimer.cancel();
@@ -134,7 +156,6 @@ public class Question_activity extends AppCompatActivity implements View.OnClick
             }
         }.start();
     }
-
     private void updateCountDownText() {
         int seconds = (int) (timeLeftInMillis / 1000);
         String timeFormatted = String.format(Locale.getDefault(), "Time: %02ds", seconds);
@@ -143,17 +164,25 @@ public class Question_activity extends AppCompatActivity implements View.OnClick
 
     @Override
     public void onClick(View v) {
-        int selectedOptionIndex = -1;
-        int id = v.getId();
-        if (id == R.id.buttonAnswer1) {
-            selectedOptionIndex = 0;
-        } else if (id == R.id.buttonAnswer2) {
-            selectedOptionIndex = 1;
-        } else if (id == R.id.buttonAnswer3) {
-            selectedOptionIndex = 2;
-        }
+        int id = v.getId(); // الحصول على معرّف الزر الذي تم الضغط عليه
 
-        checkAnswer(selectedOptionIndex);
+        if (id == R.id.buttonAnswer1) {
+            // إذا كان زر الإجابة الأول، تحقق من الإجابة بالفهرس 0
+            checkAnswer(0);
+        } else if (id == R.id.buttonAnswer2) {
+            // إذا كان زر الإجابة الثاني، تحقق من الإجابة بالفهرس 1
+            checkAnswer(1);
+        } else if (id == R.id.buttonAnswer3) {
+            // إذا كان زر الإجابة الثالث، تحقق من الإجابة بالفهرس 2
+            checkAnswer(2);
+        } else if (id == R.id.button_Skip) {
+            // إذا كان زر التخطي، استدعِ دالة التخطي
+            skipQuestion();
+        } else if (id == R.id.button_Skip) {
+            // إذا كان زر التلميح، استدعِ دالة التلميح
+            useHint();
+        }
+        // لا يوجد استدعاء لـ checkAnswer هنا في النهاية بعد الآن
     }
 
 
@@ -272,7 +301,7 @@ public class Question_activity extends AppCompatActivity implements View.OnClick
             timerMediaPlayer.setLooping(true); // اجعل الصوت يتكرر
             timerMediaPlayer.start();
         } else {
-            Toast.makeText(this, "Error loading timer sound", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error loading timer sound", LENGTH_SHORT).show();
         }
     }
     private void stopTimerSound() {
@@ -285,4 +314,79 @@ public class Question_activity extends AppCompatActivity implements View.OnClick
         }
     }
 
+    // --- ADDED --- دالة لمعالجة تخطي السؤال
+    private void skipQuestion() {
+        // 1. إيقاف المؤقت الحالي إذا كان يعمل
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+        // 2. إيقاف صوت المؤقت إذا كان يعمل
+        stopTimerSound();
+
+        // 3. تعطيل جميع الأزرار التفاعلية فوراً
+        disableButtons();
+
+        // 4. عرض رسالة للمستخدم تفيد بأنه تم تخطي السؤال
+        Toast.makeText(this, "Question Skipped", LENGTH_SHORT).show();
+
+        // 5. الانتظار لفترة قصيرة ثم عرض السؤال التالي
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                showNextQuestion(); // استدعاء دالة عرض السؤال التالي
+            }
+        }, 1500); // تأخير لمدة 1.5 ثانية (نفس التأخير المستخدم بعد الإجابة)
+    }
+
+    // --- ADDED --- دالة مساعدة لتعطيل جميع الأزرار التفاعلية
+    private void disableButtons() {
+        buttonAnswer1.setEnabled(false);
+        buttonAnswer2.setEnabled(false);
+        buttonAnswer3.setEnabled(false);
+        button_Skip.setEnabled(false); // تعطيل زر التخطي أيضاً
+        // buttonHint.setEnabled(false); // قم بتضمين هذا السطر فقط إذا كان لديك زر تلميح
+    }
+
+    // --- تأكد من إضافة هذه الدالة بالكامل --- 
+    private void useHint() {
+        Toast.makeText(this, "Hint Button Clicked!", Toast.LENGTH_SHORT).show(); // <-- أضف هذا السطر هنا
+
+        boolean hintUsed = false;
+        if (hintUsed || !buttonHint.isEnabled()) {
+            if (hintUsed) {
+                Toast.makeText(this, "Hint already used!", LENGTH_SHORT).show();
+            }
+            return;
+        }
+
+        hintUsed = true;
+        buttonHint.setEnabled(false);
+        buttonHint.setAlpha(0.5f); // Visually indicate used hint
+
+        Question currentQuestion = questionList.get(currentQuestionIndex - 1);
+        int correctOptionIndex = currentQuestion.getCorrectAnswerIndex();
+
+        Random random = new Random();
+        int optionToDisable;
+        do {
+            optionToDisable = random.nextInt(3);
+        } while (optionToDisable == correctOptionIndex);
+
+        Button buttonToDisable = null;
+        if (optionToDisable == 0) {
+            buttonToDisable = buttonAnswer1;
+        } else if (optionToDisable == 1) {
+            buttonToDisable = buttonAnswer2;
+        } else { // optionToDisable == 2
+            buttonToDisable = buttonAnswer3;
+        }
+
+        if (buttonToDisable != null) {
+            buttonToDisable.setEnabled(false);
+            buttonToDisable.setAlpha(0.5f); // Make it look disabled
+            Toast.makeText(this, "One wrong option removed!", LENGTH_SHORT).show();
+        }
+    }
+    
+    
 }

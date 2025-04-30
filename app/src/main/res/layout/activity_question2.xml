@@ -17,20 +17,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
+    <!-- Note: Replace placeholder_image with your actual default or first question image -->
+    <!-- Make sure to add your question images to the res/drawable folder -->
+
     <TextView
         android:id="@+id/textViewQuestionNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:fontFamily="@font/adlam_display"
         android:text="Question: 1/10"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewTimer" />
-
-
-    <!-- Note: Replace placeholder_image with your actual default or first question image -->
-    <!-- Make sure to add your question images to the res/drawable folder -->
 
     <ImageView
         android:id="@+id/imageViewQuestion"
@@ -44,7 +44,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewQuestionNumber"
-        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintVertical_bias="0.642"
         app:srcCompat="@drawable/spain" />
 
     <Button
@@ -94,5 +94,34 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/button_Skip"
+        android:layout_width="160dp"
+        android:layout_height="48dp"
+        android:backgroundTint="@color/black"
+        android:fontFamily="@font/adlam_display"
+        android:text="Sauter"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:cornerRadius="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonAnswer3"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <Button
+        android:id="@+id/buttonHint"
+        android:layout_width="88dp"
+        android:layout_height="44dp"
+        android:backgroundTint="@color/sky_orange"
+        android:text="Hint"
+        app:cornerRadius="0dp"
+        app:layout_constraintEnd_toStartOf="@+id/textViewTimer"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
